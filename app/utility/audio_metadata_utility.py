@@ -73,6 +73,8 @@ def fill_flac_metadata(file: FLAC, cover_path: str, lyric_path: str):
         lyric = open(lyric_path, "r", encoding="utf-8").read()
         file['lyrics'] = lyric
     file.save()
+    os.remove(cover_path)
+    os.remove(lyric_path)
 
 
 # Both WAV and FLAC are lossless audio format, the conversion has absolutely no quality impact
@@ -85,7 +87,17 @@ def wav_2_flac(audio_path: str):
         os.remove(audio_path)
         # reference new audio_path
         audio_path = flac_audio_path
+    return audio_path
 
+
+def wav_2_mp3(audio_path: str):
+    base, audio_type = os.path.splitext(audio_path)
+    if audio_type == ".wav":
+        mp3_audio_path = base + ".mp3"
+        AudioSegment.from_wav(audio_path).export(mp3_audio_path, format='mp3')
+        os.remove(audio_path)
+        # reference new audio_path
+        audio_path = mp3_audio_path
     return audio_path
 
 
@@ -100,6 +112,7 @@ def lyric_file_to_text(filename):
         text = sub.text
         ret.append((text, time))
     return ret
+
 
 def get_mime(image_path: str) -> str:
     ext = os.path.splitext(image_path)[1]

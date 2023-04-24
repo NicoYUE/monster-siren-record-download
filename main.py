@@ -5,6 +5,7 @@ from requests import Session
 from cache.album_cache import AlbumCache
 from domain.model.metadata import Metadata
 from domain.monster_siren_service import MonsterSirenService
+from infrastructure.monster_siren_repository import MonsterSirenRepository
 from utility import os_utility, audio_metadata_utility
 from utility.media_downloader import MediaDownloader
 
@@ -15,7 +16,8 @@ if __name__ == '__main__':
 
     os_utility.make_dir_if_not_exist(BASE_DIRECTORY)
 
-    msr_service = MonsterSirenService(session)
+    msr_repository = MonsterSirenRepository(session)
+    msr_service = MonsterSirenService(session, msr_repository)
     media_downloader = MediaDownloader(session)
 
     album_cache = AlbumCache()

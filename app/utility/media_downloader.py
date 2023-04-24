@@ -1,7 +1,7 @@
 from requests import Session
 from tqdm import tqdm
 
-from utility.audio_metadata_utility import wav_2_flac
+from utility.audio_metadata_utility import wav_2_flac, wav_2_mp3
 
 
 class MediaDownloader:
@@ -36,7 +36,8 @@ class MediaDownloader:
                 bar.update(size)
 
         if audio_type == "audio/wav":
-            return wav_2_flac(output_path)
+            return wav_2_mp3(output_path)
+            # return wav_2_flac(output_path)
 
         return output_path
 
