@@ -5,8 +5,8 @@ from requests import Session
 from domain.model.msr_album import MsrAlbum
 from domain.model.msr_song import MsrSong
 from infrastructure.monster_siren_repository import MonsterSirenRepository
-from infrastructure.response.msr.album_detail_response import AlbumDetailResponse
-from infrastructure.response.msr.song_response import SongResponse
+from infrastructure.response.monster_siren.album_detail_response import AlbumDetailResponse
+from infrastructure.response.monster_siren.song_response import SongResponse
 
 
 class MonsterSirenService:

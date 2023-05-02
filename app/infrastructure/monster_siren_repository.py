@@ -3,9 +3,9 @@ from typing import List
 
 from requests import Session
 
-from infrastructure.response.msr.album_detail_response import AlbumDetailResponse
-from infrastructure.response.msr.album_response import AlbumResponse
-from infrastructure.response.msr.song_response import SongResponse
+from infrastructure.response.monster_siren.album_detail_response import AlbumDetailResponse
+from infrastructure.response.monster_siren.album_response import AlbumResponse
+from infrastructure.response.monster_siren.song_response import SongResponse
 from utility import str_utility
 
 ALBUMS_URL = "https://monster-siren.hypergryph.com/api/albums"
