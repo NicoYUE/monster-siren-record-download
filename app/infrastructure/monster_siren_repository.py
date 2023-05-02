@@ -21,7 +21,7 @@ class MonsterSirenRepository:
     def get_albums(self) -> List[AlbumResponse]:
         response = self.get_json_request(ALBUMS_URL)["data"]
         return [AlbumResponse(album_id=elem["cid"],
-                              name=elem["name"],
+                              name=elem["name"].strip(),
                               cover_url=elem["coverUrl"]) for elem in response]
 
     def get_album_details(self, album_id: str) -> AlbumDetailResponse:

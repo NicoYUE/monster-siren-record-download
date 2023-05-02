@@ -4,7 +4,7 @@ import pylrc
 from PIL import Image
 from mutagen.easyid3 import EasyID3
 from mutagen.flac import FLAC, Picture
-from mutagen.id3 import ID3, APIC, SYLT, Encoding
+from mutagen.id3 import ID3, APIC, SYLT, Encoding, TextFrame
 from pydub import AudioSegment
 
 from domain.model.metadata import Metadata
@@ -15,25 +15,25 @@ AudioSegment.ffmpeg = os.environ.get("FFMPEG")
 def fill_audio_metadata(audio_path, metadata: Metadata):
     base, audio_type = os.path.splitext(audio_path)
     if audio_type == ".mp3":
-        fill_mp3_metadata(audio_path, metadata.cover_path, metadata.lyric_path)
-        file = EasyID3(audio_path)
+        fill_mp3_metadata(audio_path, metadata)
     elif audio_type == ".flac":
         file = FLAC(audio_path)
-        fill_flac_metadata(file, metadata.cover_path, metadata.lyric_path)
+        fill_flac_metadata(file, metadata)
+    return
 
+
+def fill_mp3_metadata(audio_path: str, metadata: Metadata):
+
+    file = EasyID3(audio_path)
     file['title'] = metadata.title
     file['album'] = metadata.album_name
     file['artist'] = ''.join(metadata.artists)
 
-    if audio_type == ".mp3":
-        file.save(v2_version=3)
-    else:
-        file.save()
+    file.save()
 
-    return
-
-
-def fill_mp3_metadata(audio_path: str, cover_path: str, lyric_path: str):
+    cover_path = metadata.cover_path
+    lyric_path = metadata.lyric_path
+    # Use ID3 for media metadata
     file = ID3(audio_path)
 
     with open(cover_path, "rb") as cover:
@@ -51,17 +51,24 @@ def fill_mp3_metadata(audio_path: str, cover_path: str, lyric_path: str):
                                   format=2,
                                   type=1,
                                   text=sylt)])
+        os.remove(lyric_path)
+
     file.save(v2_version=3)
-    # TODO later add the possibility to toggle removal or not
-    os.remove(cover_path)
-    os.remove(lyric_path)
 
 
-def fill_flac_metadata(file: FLAC, cover_path: str, lyric_path: str):
+def fill_flac_metadata(file: FLAC, metadata: Metadata):
+    file['title'] = metadata.title
+    file['album'] = metadata.album_name
+    file['artist'] = ''.join(metadata.artists)
+
+    cover_path = metadata.cover_path
+    lyric_path = metadata.lyric_path
+
     image = Picture()
     image.type = 3
     image.desc = "Cover"
     image.mime = get_mime(cover_path)
+
     with open(cover_path, "rb") as f:
         image.data = f.read()
     with Image.open(cover_path) as imagePil:
@@ -73,7 +80,6 @@ def fill_flac_metadata(file: FLAC, cover_path: str, lyric_path: str):
         lyric = open(lyric_path, "r", encoding="utf-8").read()
         file['lyrics'] = lyric
     file.save()
-    os.remove(cover_path)
     os.remove(lyric_path)
 
 
